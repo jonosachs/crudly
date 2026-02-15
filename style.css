@@ -1,0 +1,102 @@
+body {
+  font-family: "Space Grotesk", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+  font-size: large;
+  justify-content: center;
+  width: 75%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+textarea,
+input {
+  box-sizing: border-box;
+  border-radius: 10px;
+  border: solid 1px grey;
+  resize: none;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0px 10px 0px;
+  height: 70px;
+  font-size: large;
+  overflow-inline: auto;
+  overflow-y: auto;
+}
+
+button {
+  background: rgb(0, 191, 255);
+  border: 0px transparent;
+  padding: 10px;
+  border-radius: 10px;
+  width: 100%;
+  font-size: medium;
+  user-select: none;
+}
+
+button:hover {
+  background: lightblue;
+}
+
+header {
+  background: rgb(210, 210, 210);
+  padding: 10px;
+  text-align: center;
+}
+
+p {
+  text-align: center;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0px;
+  user-select: none;
+}
+
+i {
+  text-align: right;
+}
+
+i:hover {
+  font-weight: bold;
+}
+
+.date {
+  font-weight: bold;
+  color: rgb(0, 0, 0);
+}
+
+.post-head {
+  display: grid;
+  grid-template-columns: auto auto;
+}
+
+#main {
+}
+
+#feed {
+  padding: 20px;
+  background: greenyellow;
+  min-height: 25vh;
+}
+
+#form {
+  padding: 20px;
+  background: rgb(255, 173, 173);
+  /* background: #6d6d6d; */
+}
+
+.post {
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 10px;
+  margin: 15px auto;
+}
+
+.post:hover {
+  border: 2px solid black;
+  cursor: pointer;
+}
