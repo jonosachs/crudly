@@ -34,10 +34,8 @@ pip install -r requirements.txt
 ### Run the backend
 
 ```bash
-python -m uvicorn api:app --reload
+fastapi dev api.py
 ```
-
-The API will be available at `http://127.0.0.1:8000/`.
 
 ### Run the frontend
 
