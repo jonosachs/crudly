@@ -5,11 +5,13 @@ let postid = 1;
 
 form.addEventListener("submit", handleSubmit);
 
-// createPost("Welcome to Crudly.");
+updateFeed();
 
-const posts = await loadPosts();
-for (const post of posts) {
-  createPost(post["text"]);
+async function updateFeed() {
+  const posts = await loadPosts();
+  for (const post of posts) {
+    createPost(post["text"]);
+  }
 }
 
 function handleSubmit(e) {
