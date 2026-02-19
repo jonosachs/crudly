@@ -1,0 +1,8 @@
+.env
+.aws/
+*.db
+__pycache__/
+*.pyc
+.venv/
+venv/
+AWSCLIV2.pkg
