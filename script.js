@@ -14,14 +14,27 @@ async function refreshFeed() {
 
 function handleSubmit(e) {
   e.preventDefault();
-  const content = document.getElementById("input").value;
-  buildPost(content);
+  const text = document.getElementById("input").value;
+  createNewPost(text);
+}
+
+async function getAllPosts() {
+  const response = await serverRequest("/", "GET", null);
+  return response;
 }
 
 async function createNewPost(text) {
   const newpost = await serverRequest("/", "POST", { text: text });
-  console.log(newpost);
   buildPost(newpost.id, newpost.timestamp, newpost.text);
+}
+
+async function updatePost(id, text) {
+  const newpost = await serverRequest("/", "PUT", { id: id, text: text });
+  return newpost;
+}
+
+async function deletePost(id) {
+  const deleted = await serverRequest(`/${id}`, "DELETE", null);
 }
 
 function buildPost(id, timestamp, text) {
@@ -30,7 +43,7 @@ function buildPost(id, timestamp, text) {
   newPost.className = "post";
   newPost.innerHTML = `
   <div class="post-head">
-    <small class="date">${timestamp}</small>
+    <small id="timestamp-${id}" class="timestamp">${timestamp}</small>
     <span>
       <i id="edit-btn-${id}" class="fa-regular fa-pen-to-square right"></i>
       <i id="delete-btn-${id}" class="fa-regular fa-rectangle-xmark right"></i>
@@ -47,23 +60,28 @@ function buildPost(id, timestamp, text) {
   // add delete button listener
   const ref = id;
   const deleteBtn = document.getElementById(`delete-btn-${ref}`);
-  deleteBtn.addEventListener("click", () => deletePostById(ref));
+  deleteBtn.addEventListener("click", async () => await deletePostById(ref));
 
   // add edit button listener
   const editBtn = document.getElementById(`edit-btn-${ref}`);
-  editBtn.addEventListener("click", () => editPostById(ref));
+  editBtn.addEventListener("click", async () => await editPostById(ref));
 
   // clear user input
   document.getElementById("input").value = "";
 }
 
-function deletePostById(id) {
+async function deletePostById(id) {
+  // delete post from server
+  await deletePost(id);
+
+  // delete post locally
   const post = document.getElementById(`post-${id}`);
   feed.removeChild(post);
+
+  console.log("post deleted");
 }
 
-function editPostById(id) {
-  console.log("edit post");
+async function editPostById(id) {
   const post = document.getElementById(`post-${id}`);
   const postText = document.getElementById(`content-${id}`);
   const editbox = document.createElement("textarea");
@@ -74,24 +92,29 @@ function editPostById(id) {
 
   editbox.focus();
 
-  // listen for editbox loss of focus (a click outside the box)
-  editbox.addEventListener("blur", () => {
-    lockcontent(id);
-  });
+  // merge text on editbox loss of focus (a click outside the box)
+  editbox.addEventListener("blur", async () => await mergetext(id));
 }
 
-function lockcontent(id) {
-  console.log("lock");
+async function mergetext(id) {
   const post = document.getElementById(`post-${id}`);
   const postText = document.getElementById(`content-${id}`);
   const editbox = document.getElementById(`editbox-${id}`);
-  postText.textContent = `"${editbox.value}"`;
-  post.removeChild(editbox);
-}
+  const timestamp = document.getElementById(`timestamp-${id}`);
 
-async function getAllPosts() {
-  const response = await serverRequest("/", "GET", null);
-  return response;
+  const updatedText = editbox.value;
+
+  // update post on server (and get new timestamp)
+  const updatedPost = await updatePost(id, updatedText);
+
+  // update text and timestamp locally
+  postText.textContent = `"${updatedText}"`;
+  timestamp.textContent = updatedPost.timestamp;
+
+  // remove the edit box
+  post.removeChild(editbox);
+
+  console.log("post updated");
 }
 
 async function serverRequest(route, method, data) {
