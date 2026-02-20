@@ -7,8 +7,6 @@ from datetime import datetime
 
 app = FastAPI()
 
-time = datetime.now().strftime("%m/%d/%Y, %I:%M:%S %p")
-
 client = boto3.client("dynamodb", region_name='ap-southeast-2')
 dynamodb = boto3.resource("dynamodb", region_name='ap-southeast-2')
 table = dynamodb.Table('Posts')
@@ -41,7 +39,7 @@ def get_all():
 
 @app.post("/")
 def create(post: NewPost):
-  newpost = Post(id=str(uuid.uuid4()), timestamp=time, text=post.text)
+  newpost = Post(id=str(uuid.uuid4()), timestamp=datetime.now().strftime("%m/%d/%Y, %I:%M:%S %p"), text=post.text)
   table.put_item(Item=newpost.model_dump())
   return newpost
 
@@ -53,6 +51,6 @@ def delete(id: str):
 
 @app.put("/")
 def update(post: UpdatePost):
-  updated = Post(id=post.id, timestamp=time, text=post.text)
+  updated = Post(id=post.id, timestamp=datetime.now().strftime("%m/%d/%Y, %I:%M:%S %p"), text=post.text)
   table.put_item(Item=updated.model_dump())
   return updated

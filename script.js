@@ -26,6 +26,7 @@ async function getAllPosts() {
 async function createNewPost(text) {
   const newpost = await serverRequest("/", "POST", { text: text });
   buildPost(newpost.id, newpost.timestamp, newpost.text);
+  console.log("post created");
 }
 
 async function updatePost(id, text) {
