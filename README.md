@@ -12,11 +12,11 @@ A full-stack CRUD application for creating, reading, editing, and deleting posts
 
 ## Features
 
-- View a feed of posts fetched from the backend
-- Create new posts via a text input form
-- Edit posts inline
-- Delete posts from the feed
-- Timestamps displayed on each post
+- View a feed of posts fetched from DynamoDB via the API
+- Create new posts with auto-generated UUIDs and timestamps
+- Edit posts inline (click away to save)
+- Delete posts from the feed and database
+- All CRUD operations persist to DynamoDB — DOM updates only after server confirmation
 
 ## Getting Started
 
