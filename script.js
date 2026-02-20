@@ -1,41 +1,43 @@
 const form = document.querySelector("#myForm");
 const feed = document.getElementById("feed");
 
-let postid = 1;
-
 form.addEventListener("submit", handleSubmit);
 
-updateFeed();
+refreshFeed();
 
-async function updateFeed() {
-  const posts = await loadPosts();
+async function refreshFeed() {
+  const posts = await getAllPosts();
   for (const post of posts) {
-    createPost(post["text"]);
+    buildPost(post.id, post.timestamp, post.text);
   }
 }
 
 function handleSubmit(e) {
   e.preventDefault();
   const content = document.getElementById("input").value;
-  createPost(content);
+  buildPost(content);
 }
 
-function createPost(content) {
-  // create new post with unique id and timestamp
+async function createNewPost(text) {
+  const newpost = await serverRequest("/", "POST", { text: text });
+  console.log(newpost);
+  buildPost(newpost.id, newpost.timestamp, newpost.text);
+}
+
+function buildPost(id, timestamp, text) {
   const newPost = document.createElement("div");
-  const timestamp = new Date(Date.now()).toLocaleString();
-  newPost.id = `post-${postid}`;
+  newPost.id = `post-${id}`;
   newPost.className = "post";
   newPost.innerHTML = `
   <div class="post-head">
     <small class="date">${timestamp}</small>
     <span>
-      <i id="edit-btn-${postid}" class="fa-regular fa-pen-to-square right"></i>
-      <i id="delete-btn-${postid}" class="fa-regular fa-rectangle-xmark right"></i>
+      <i id="edit-btn-${id}" class="fa-regular fa-pen-to-square right"></i>
+      <i id="delete-btn-${id}" class="fa-regular fa-rectangle-xmark right"></i>
     <span>
   </div>
   <div class="post-text">
-    <p id=content-${postid}>"${content}"</p>
+    <p id=content-${id}>"${text}"</p>
   </div>
   `;
 
@@ -43,19 +45,16 @@ function createPost(content) {
   feed.appendChild(newPost);
 
   // add delete button listener
-  const id = postid;
-  const deleteBtn = document.getElementById(`delete-btn-${id}`);
-  deleteBtn.addEventListener("click", () => deletePostById(id));
+  const ref = id;
+  const deleteBtn = document.getElementById(`delete-btn-${ref}`);
+  deleteBtn.addEventListener("click", () => deletePostById(ref));
 
   // add edit button listener
-  const editBtn = document.getElementById(`edit-btn-${id}`);
-  editBtn.addEventListener("click", () => editPostById(id));
+  const editBtn = document.getElementById(`edit-btn-${ref}`);
+  editBtn.addEventListener("click", () => editPostById(ref));
 
   // clear user input
   document.getElementById("input").value = "";
-
-  // increment post id
-  postid++;
 }
 
 function deletePostById(id) {
@@ -90,13 +89,24 @@ function lockcontent(id) {
   post.removeChild(editbox);
 }
 
-async function loadPosts() {
+async function getAllPosts() {
+  const response = await serverRequest("/", "GET", null);
+  return response;
+}
+
+async function serverRequest(route, method, data) {
   try {
-    const url = "http://127.0.0.1:8000/";
-    const response = await fetch(url);
+    const url = `http://127.0.0.1:8000${route}`;
+    const response = await fetch(url, {
+      method: method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: data ? JSON.stringify(data) : undefined,
+    });
 
     if (!response.ok) {
-      throw new Error(`Reponse error: ${response.Error}`);
+      throw new Error(`Server reponse error: ${response.status} ${response.statusText}`);
     }
 
     const result = await response.json();
