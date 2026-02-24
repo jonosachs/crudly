@@ -2,14 +2,17 @@ const form = document.querySelector("#myForm");
 const feed = document.getElementById("feed");
 
 form.addEventListener("submit", handleSubmit);
+const errorBar = document.getElementById("post");
 
 refreshFeed();
 
 async function refreshFeed() {
   const posts = await getAllPosts();
   for (const post of posts) {
-    buildPost(post.id, post.timestamp, post.text);
+    if (post) buildPost(post.id, post.timestamp, post.text);
   }
+
+  errorBar.textContent = "";
 }
 
 function handleSubmit(e) {
@@ -19,23 +22,23 @@ function handleSubmit(e) {
 }
 
 async function getAllPosts() {
-  const response = await serverRequest("/", "GET", null);
+  const response = await serverRequest({ method: "GET" });
   return response;
 }
 
 async function createNewPost(text) {
-  const newpost = await serverRequest("/", "POST", { text: text });
+  const newpost = await serverRequest({ method: "POST", data: { text: text } });
   buildPost(newpost.id, newpost.timestamp, newpost.text);
   console.log("post created");
 }
 
 async function updatePost(id, text) {
-  const newpost = await serverRequest("/", "PUT", { id: id, text: text });
+  const newpost = await serverRequest({ method: "PUT", data: { id: id, text: text } });
   return newpost;
 }
 
 async function deletePost(id) {
-  const deleted = await serverRequest(`/${id}`, "DELETE", null);
+  const deleted = await serverRequest({ route: `${id}`, method: "DELETE" });
 }
 
 function buildPost(id, timestamp, text) {
@@ -51,9 +54,12 @@ function buildPost(id, timestamp, text) {
     <span>
   </div>
   <div class="post-text">
-    <p id=content-${id}>"${text}"</p>
+    <p id=content-${id}></p>
   </div>
   `;
+
+  // set user supplied text using textContent (instead of innerHTML)
+  document.getElementById(`content-${id}`).textContent = text;
 
   // append post to end of feed
   feed.appendChild(newPost);
@@ -118,9 +124,14 @@ async function mergetext(id) {
   console.log("post updated");
 }
 
-async function serverRequest(route, method, data) {
+async function serverRequest({
+  base_url = "http://127.0.0.1:8000/",
+  route = "",
+  method = "GET",
+  data = undefined,
+}) {
   try {
-    const url = `http://127.0.0.1:8000${route}`;
+    const url = `${base_url}${route}`;
     const response = await fetch(url, {
       method: method,
       headers: {
@@ -130,12 +141,14 @@ async function serverRequest(route, method, data) {
     });
 
     if (!response.ok) {
-      throw new Error(`Server reponse error: ${response.status} ${response.statusText}`);
+      const error = ` ${response.status} ${response.statusText}`;
+      throw new Error(error);
     }
 
     const result = await response.json();
     return result;
   } catch (e) {
-    throw e;
+    errorBar.textContent = e;
+    console.log(e);
   }
 }

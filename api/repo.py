@@ -1,0 +1,26 @@
+import boto3
+from api.model import Post, UpdatePost
+
+client = boto3.client("dynamodb", region_name='ap-southeast-2')
+dynamodb = boto3.resource("dynamodb", region_name='ap-southeast-2')
+table = dynamodb.Table('Posts')
+
+def create(new_post: Post):
+  table.put_item(Item=new_post.model_dump())
+  return new_post
+
+def get_all():
+  response = table.scan()
+  return response.get('Items', []) # defaults to empty list
+
+def update(id: str, updated_post: UpdatePost) -> Post:
+  updated_post = table.update_item(
+    Key={id}, 
+    ExpressionAttributeValues={":text": updated_post.text, ":updated": updated_post.updated}, 
+    ReturnValues="ALL_NEW"
+  )
+  return updated_post
+
+def delete(id: str):
+  table.delete_item(Key={'id': id})
+  return {"message": f"deleted post-{id}"}

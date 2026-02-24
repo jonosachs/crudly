@@ -6,3 +6,4 @@ __pycache__/
 .venv/
 venv/
 AWSCLIV2.pkg
+improvements.md
