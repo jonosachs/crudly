@@ -10,6 +10,8 @@ A full-stack CRUD application for creating, reading, editing, and deleting posts
 
 **Backend:** Python, FastAPI, Pydantic, AWS DynamoDB (via boto3)
 
+Backend is structured as a model-controller-service-repository package (`api/`).
+
 ## Features
 
 - View a feed of posts fetched from DynamoDB via the API
@@ -43,7 +45,7 @@ python seed.py
 ### Run the backend
 
 ```bash
-fastapi dev api.py
+fastapi dev api/controller.py
 ```
 
 ### Run the frontend
@@ -58,11 +60,11 @@ Then visit `http://localhost:8080`.
 
 ## API Endpoints
 
-| Method | Route   | Description         |
-| ------ | ------- | ------------------- |
-| GET    | `/`     | Get all posts       |
-| POST   | `/`     | Create a new post   |
-| PUT    | `/`     | Update a post       |
-| DELETE | `/{id}` | Delete a post by ID |
+| Method | Route    | Description         |
+| ------ | -------- | ------------------- |
+| GET    | `/`      | Get all posts       |
+| POST   | `/`      | Create a new post   |
+| PUT    | `/{id}`  | Update a post by ID |
+| DELETE | `/{id}`  | Delete a post by ID |
 
 \*README generated using Claude CLI
