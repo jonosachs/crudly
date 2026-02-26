@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from botocore.exceptions import ClientError
 from api.model import Post, NewPost, UpdatePost
 import api.service as service
@@ -12,7 +13,10 @@ async def dynamo_error_handler(request: Request, exc: ClientError):
   http_status_code=exc.response["ResponseMetadata"]["HTTPStatusCode"]
   code = exc.response["Error"]["Code"]
   message = exc.response["Error"]["Message"]
-  raise HTTPException(status_code=http_status_code, detail=f"{code}, {message}")
+  return JSONResponse(
+    status_code=http_status_code, 
+    content={"detail": f"{code}, {message}"}
+  )
 
 app.add_middleware(
   CORSMiddleware,
@@ -31,7 +35,7 @@ def get_all() -> list[Post]:
   return service.get_all()
 
 @app.put("/{id}")
-def update(id: str, post: UpdatePost) -> UpdatePost:
+def update(id: str, post: UpdatePost) -> Post:
   return service.update(id, post)
 
 @app.delete("/{id}")

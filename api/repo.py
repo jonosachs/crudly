@@ -14,12 +14,20 @@ def get_all():
   return response.get('Items', []) # defaults to empty list
 
 def update(id: str, updated_post: UpdatePost) -> Post:
-  updated_post = table.update_item(
-    Key={id}, 
-    ExpressionAttributeValues={":text": updated_post.text, ":updated": updated_post.updated}, 
+  updated = updated_post.updated
+  response = table.update_item(
+    Key={"id": id}, 
+    ExpressionAttributeNames={"#t":"text"},
+    UpdateExpression="SET #t = :text, updated = :updated",
+    ExpressionAttributeValues={
+      ":text": updated_post.text,
+      ":updated": updated_post.updated
+      
+    },
     ReturnValues="ALL_NEW"
   )
-  return updated_post
+  
+  return response["Attributes"]
 
 def delete(id: str):
   table.delete_item(Key={'id': id})

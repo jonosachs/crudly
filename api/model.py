@@ -5,11 +5,13 @@ class NewPost(BaseModel):
   text: str
 
 class UpdatePost(BaseModel):
-  updated: str
   text: str
+  updated: Optional[str] = None
 
 class Post(BaseModel):
   id: str
   created: str
   updated: Optional[str] = None
   text: str
+  
+  

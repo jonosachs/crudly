@@ -83,6 +83,14 @@ i:hover {
   padding: 10px;
 }
 
+.post-text:not(empty)::before {
+  content: '"';
+}
+
+.post-text:not(empty)::after {
+  content: '"';
+}
+
 .post {
   padding: 10px;
   border: 1px solid black;

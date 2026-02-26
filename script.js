@@ -9,10 +9,10 @@ refreshFeed();
 async function refreshFeed() {
   const posts = await getAllPosts();
   for (const post of posts) {
-    if (post) buildPost(post.id, post.timestamp, post.text);
+    if (post) buildPost(post.id, post.created, post.text);
   }
 
-  errorBar.textContent = "";
+  errorBar.innerHTML = "";
 }
 
 function handleSubmit(e) {
@@ -28,26 +28,30 @@ async function getAllPosts() {
 
 async function createNewPost(text) {
   const newpost = await serverRequest({ method: "POST", data: { text: text } });
-  buildPost(newpost.id, newpost.timestamp, newpost.text);
+  buildPost(newpost.id, newpost.created, newpost.text);
   console.log("post created");
 }
 
-async function updatePost(id, text) {
-  const newpost = await serverRequest({ method: "PUT", data: { id: id, text: text } });
+async function updatePost(post_id, text) {
+  const newpost = await serverRequest({
+    route: post_id,
+    method: "PUT",
+    data: { text: text },
+  });
   return newpost;
 }
 
-async function deletePost(id) {
-  const deleted = await serverRequest({ route: `${id}`, method: "DELETE" });
+async function deletePost(post_id) {
+  const deleted = await serverRequest({ route: post_id, method: "DELETE" });
 }
 
-function buildPost(id, timestamp, text) {
+function buildPost(id, created, text) {
   const newPost = document.createElement("div");
   newPost.id = `post-${id}`;
   newPost.className = "post";
   newPost.innerHTML = `
   <div class="post-head">
-    <small id="timestamp-${id}" class="timestamp">${timestamp}</small>
+    <small id="timestamp-${id}" class="timestamp">${created}</small>
     <span>
       <i id="edit-btn-${id}" class="fa-regular fa-pen-to-square right"></i>
       <i id="delete-btn-${id}" class="fa-regular fa-rectangle-xmark right"></i>
@@ -58,11 +62,11 @@ function buildPost(id, timestamp, text) {
   </div>
   `;
 
-  // set user supplied text using textContent (instead of innerHTML)
-  document.getElementById(`content-${id}`).textContent = text;
-
   // append post to end of feed
   feed.appendChild(newPost);
+
+  // set user supplied text using textContent (instead of innerHTML)
+  document.getElementById(`content-${id}`).textContent = text;
 
   // add delete button listener
   const ref = id;
@@ -93,7 +97,7 @@ async function editPostById(id) {
   const postText = document.getElementById(`content-${id}`);
   const editbox = document.createElement("textarea");
   editbox.id = `editbox-${id}`;
-  editbox.value = postText.textContent.slice(1, -2); // remove inverted commas
+  editbox.value = postText.textContent;
   postText.textContent = "";
   post.appendChild(editbox);
 
@@ -108,15 +112,16 @@ async function mergetext(id) {
   const postText = document.getElementById(`content-${id}`);
   const editbox = document.getElementById(`editbox-${id}`);
   const timestamp = document.getElementById(`timestamp-${id}`);
-
   const updatedText = editbox.value;
+
+  console.log(id, updatedText);
 
   // update post on server (and get new timestamp)
   const updatedPost = await updatePost(id, updatedText);
 
   // update text and timestamp locally
-  postText.textContent = `"${updatedText}"`;
-  timestamp.textContent = updatedPost.timestamp;
+  postText.textContent = updatedPost.text;
+  timestamp.textContent = updatedPost.updated;
 
   // remove the edit box
   post.removeChild(editbox);
@@ -141,14 +146,15 @@ async function serverRequest({
     });
 
     if (!response.ok) {
-      const error = ` ${response.status} ${response.statusText}`;
-      throw new Error(error);
+      const error = await response.json();
+      const msg = `${response.status} ${response.statusText}<br>Detail: ${error.detail}`;
+      throw new Error(msg);
     }
 
     const result = await response.json();
     return result;
   } catch (e) {
-    errorBar.textContent = e;
+    errorBar.innerHTML = e;
     console.log(e);
   }
 }
