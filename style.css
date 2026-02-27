@@ -69,6 +69,16 @@ i:hover {
   text-align: left;
 }
 
+.updated {
+  color: rgb(255, 75, 75);
+  padding-bottom: 10px;
+  font-style: italic;
+}
+
+.updated::not(empty)::before {
+  content: "updated: ";
+}
+
 .post-head {
   display: flex;
   justify-content: space-between; /*puts max space between items*/
@@ -80,15 +90,20 @@ i:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px;
+  padding: 30px;
+  font-size: large;
 }
 
 .post-text:not(empty)::before {
-  content: '"';
+  content: "\201C";
+  font-size: xx-large;
+  padding: 10px;
 }
 
 .post-text:not(empty)::after {
-  content: '"';
+  content: "\201D";
+  font-size: xx-large;
+  padding: 10px;
 }
 
 .post {
