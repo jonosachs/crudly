@@ -42,8 +42,8 @@ Create a `.env` file in the project root (excluded from git):
 
 ```
 # DynamoDB settings
-DB_TABLE=Posts
-DB_REGION=ap-southeast-2
+DB_TABLE=your_table_name
+DB_REGION=your_aws_region
 ```
 
 Update `config.js` with your backend URL:
