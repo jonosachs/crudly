@@ -25,7 +25,7 @@ Backend is structured as a model-controller-service-repository package (`api/`).
 ### Prerequisites
 
 - Python 3
-- AWS account with a DynamoDB table named `Posts` in `ap-southeast-2`
+- AWS account with DynamoDB
 - AWS credentials configured locally
 
 ### Install dependencies
@@ -34,6 +34,22 @@ Backend is structured as a model-controller-service-repository package (`api/`).
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
+```
+
+### Configure environment
+
+Create a `.env` file in the project root (excluded from git):
+
+```
+# DynamoDB settings
+DB_TABLE=Posts
+DB_REGION=ap-southeast-2
+```
+
+Update `config.js` with your backend URL:
+
+```js
+export const BASE_URL = "http://127.0.0.1:8000/";
 ```
 
 ### Seed the database (optional)
@@ -60,11 +76,11 @@ Then visit `http://localhost:8080`.
 
 ## API Endpoints
 
-| Method | Route    | Description         |
-| ------ | -------- | ------------------- |
-| GET    | `/`      | Get all posts       |
-| POST   | `/`      | Create a new post   |
-| PUT    | `/{id}`  | Update a post by ID |
-| DELETE | `/{id}`  | Delete a post by ID |
+| Method | Route   | Description         |
+| ------ | ------- | ------------------- |
+| GET    | `/`     | Get all posts       |
+| POST   | `/`     | Create a new post   |
+| PUT    | `/{id}` | Update a post by ID |
+| DELETE | `/{id}` | Delete a post by ID |
 
 \*README generated using Claude CLI

@@ -1,9 +1,15 @@
 import boto3
 from api.model import Post, UpdatePost
+from dotenv import load_dotenv
+import os
 
-client = boto3.client("dynamodb", region_name='ap-southeast-2')
-dynamodb = boto3.resource("dynamodb", region_name='ap-southeast-2')
-table = dynamodb.Table('Posts')
+load_dotenv()
+db_region = os.getenv("DB_REGION")
+db_table = os.getenv("DB_TABLE")
+
+client = boto3.client("dynamodb", region_name=db_region)
+dynamodb = boto3.resource("dynamodb", region_name=db_region)
+table = dynamodb.Table(db_table)
 
 def create(new_post: Post):
   table.put_item(Item=new_post.model_dump())

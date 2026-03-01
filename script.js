@@ -1,3 +1,5 @@
+import { BASE_URL } from "./config.js";
+
 const form = document.querySelector("#myForm");
 const feed = document.getElementById("feed");
 
@@ -143,7 +145,7 @@ async function mergetext(id) {
 }
 
 async function serverRequest({
-  base_url = "http://127.0.0.1:8000/",
+  base_url = BASE_URL,
   route = "",
   method = "GET",
   data = undefined,
