@@ -1,145 +1,216 @@
 :root {
-  --width: 50%;
-  --max-width: 800px;
+  --max-width: 640px;
+
+  /* palette */
+  --bg: #f4f4f5;
+  --surface: #ffffff;
+  --border: #e4e4e7;
+  --text: #18181b;
+  --muted: #71717a;
+  --accent: #4f46e5;
+  --accent-hover: #4338ca;
+  --danger: #dc2626;
+
+  --radius: 12px;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 * {
-  font-family: "Space Grotesk", sans-serif;
-  font-optical-sizing: auto;
   margin: 0;
   box-sizing: border-box;
 }
 
-textarea,
-input {
-  border-radius: 10px;
-  border: solid 1px grey;
-  resize: none;
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0px 10px 0px;
-  font-size: large;
-  overflow-inline: auto;
-  overflow-y: auto;
+body {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-button {
-  background: rgb(0, 191, 255);
-  border: 0px transparent;
-  padding: 10px;
-  border-radius: 10px;
-  width: 100%;
-  font-size: medium;
-  user-select: none;
-}
-
-button:hover {
-  background: rgb(163, 163, 163);
-}
+/* ---------- header ---------- */
 
 header {
-  background: rgb(210, 210, 210);
-  padding: 10px;
-  font-size: small;
-  padding: 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 18px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
-h1,
-h2,
-h3 {
-  margin: 0px;
+h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  max-width: var(--max-width);
+  margin: 0 auto;
   user-select: none;
+}
+
+/* ---------- feed ---------- */
+
+#feed {
+  flex: 1;
+  width: 100%;
+  /* +40px so the inner content matches the header/composer containers,
+     which get their 20px gutter from their parent's padding */
+  max-width: calc(var(--max-width) + 40px);
+  margin: 0 auto;
+  padding: 32px 20px 40px;
 }
 
 h2 {
-  padding-bottom: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-bottom: 16px;
+  user-select: none;
 }
 
-i {
-  text-align: right;
+#post:not(:empty) {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: var(--danger);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-size: 0.875rem;
+  margin-bottom: 16px;
 }
 
-i:hover {
-  font-weight: bold;
+/* ---------- post card ---------- */
+
+.post {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 
-.timestamp {
-  font-weight: bold;
-  color: rgb(0, 0, 0);
-  text-align: left;
-}
-
-.updated {
-  color: rgb(255, 75, 75);
-  padding-bottom: 10px;
-  font-style: italic;
-}
-
-.updated::not(empty)::before {
-  content: "updated: ";
+.post:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05), 0 8px 24px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
 }
 
 .post-head {
   display: flex;
-  justify-content: space-between; /*puts max space between items*/
+  justify-content: space-between;
   align-items: center;
+  gap: 12px;
+}
+
+.post-head + .post-head {
+  margin-top: 2px;
+}
+
+.timestamp {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
+.updated {
+  color: var(--accent);
+  font-style: normal;
 }
 
 .post-text {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 30px;
-  font-size: large;
+  padding: 12px 0 2px;
+  font-size: 1rem;
+  overflow-wrap: anywhere;
 }
 
-.post-text:not(empty)::before {
-  content: "\201C";
-  font-size: xx-large;
-  padding: 10px;
-}
+/* ---------- icons ---------- */
 
-.post-text:not(empty)::after {
-  content: "\201D";
-  font-size: xx-large;
-  padding: 10px;
-}
-
-.post {
-  padding: 10px;
-  border: 1px solid black;
-  border-radius: 10px;
-  margin: 15px auto;
-  width: 100%;
-  min-height: 100px;
-  background: rgb(255, 200, 200);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.post:hover {
-  border: 2px solid black;
+.post-head i {
+  color: #a1a1aa;
   cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: color 0.15s ease, background 0.15s ease;
 }
 
-#feed {
-  padding: 20px;
-  min-height: 25vh;
-  width: var(--width);
-  max-width: var(--max-width);
-  margin: 0 auto;
-  text-align: center;
+.post-head i:hover {
+  color: var(--accent);
+  background: var(--bg);
 }
+
+.post-head i.fa-rectangle-xmark:hover {
+  color: var(--danger);
+}
+
+/* ---------- composer ---------- */
 
 #form {
-  padding: 20px;
-  background: rgb(210, 210, 210);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 16px 20px;
+  position: sticky;
+  bottom: 0;
 }
 
 #myForm {
-  width: var(--width);
+  width: 100%;
   max-width: var(--max-width);
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+textarea {
+  font: inherit;
+  font-size: 0.9375rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  width: 100%;
+  resize: none;
+  min-height: 76px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+textarea:focus {
+  outline: none;
+  background: var(--surface);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+}
+
+textarea::placeholder {
+  color: var(--muted);
+}
+
+/* inline edit box inside a card */
+.post textarea {
+  margin-top: 10px;
+}
+
+button {
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  background: var(--accent);
+  color: #fff;
+  border: 0;
+  border-radius: var(--radius);
+  padding: 11px;
+  cursor: pointer;
+  align-self: flex-end;
+  min-width: 120px;
+  transition: background 0.15s ease;
+}
+
+button:hover {
+  background: var(--accent-hover);
 }
