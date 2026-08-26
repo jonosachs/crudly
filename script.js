@@ -10,6 +10,7 @@ refreshFeed();
 
 async function refreshFeed() {
   const posts = await getAllPosts();
+
   for (const post of posts) {
     if (post) buildPost(post);
   }
@@ -24,19 +25,19 @@ function handleSubmit(e) {
 }
 
 async function getAllPosts() {
-  const response = await serverRequest({ method: "GET" });
+  const response = await serverRequest({ route: "posts/", method: "GET" });
   return response;
 }
 
 async function createNewPost(text) {
-  const newpost = await serverRequest({ method: "POST", data: { text: text } });
+  const newpost = await serverRequest({ route: "posts/", method: "POST", data: { text: text } });
   buildPost(newpost);
   console.log("post created");
 }
 
 async function updatePost(post_id, text) {
   const newpost = await serverRequest({
-    route: post_id,
+    route: `posts/${post_id}`,
     method: "PUT",
     data: { text: text },
   });
@@ -44,7 +45,7 @@ async function updatePost(post_id, text) {
 }
 
 async function deletePost(post_id) {
-  const deleted = await serverRequest({ route: post_id, method: "DELETE" });
+  const deleted = await serverRequest({ route: `posts/${post_id}`, method: "DELETE" });
 }
 
 function buildPost(post) {
@@ -146,7 +147,7 @@ async function mergetext(id) {
 
 async function serverRequest({
   base_url = BASE_URL,
-  route = "",
+  route = "posts/",
   method = "GET",
   data = undefined,
 }) {
