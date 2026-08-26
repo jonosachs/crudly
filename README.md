@@ -61,8 +61,12 @@ python seed.py
 ### Run the backend
 
 ```bash
-fastapi dev api/controller.py
+uvicorn api.controller:app --reload --reload-dir api
 ```
+
+`--reload-dir api` limits the file watcher to the source directory. Without it the
+watcher scans the whole project, virtualenv included, and restarts on every change
+under `site-packages`.
 
 ### Run the frontend
 
